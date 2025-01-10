@@ -1,0 +1,12 @@
+# Get the list of tuples from the user
+ListOfTuples = eval(input("Enter a list of tuples: "))
+
+# Get the values for `a` and `b`
+a = int(input("Enter the minimum occurrences (a): "))
+b = int(input("Enter the target number (b): "))
+
+# Filter tuples that have `b` occurring at least `a` times
+result = [t for t in ListOfTuples if t.count(b) >= a]
+
+# Print the result
+print("Filtered list:", result)
