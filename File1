@@ -1,0 +1,91 @@
+Uploaded a file
+Uploaded a file
+I have to code it in terminal in Oracle platform . Give me the code to make these tables show them and then queries of all the individual questions. Do the numbering correctly like 1st table ..2nd table . Q1 q2 etc
+ChatGPT said:
+Here is the complete Oracle SQL script to:
+
+Create the tables (SALESMAN, CONSUMER, ORDER_DETAIL)
+
+Display the data
+
+Execute the queries Q1 to Q6 from your question paper
+
+1st Table – SALESMAN
+CREATE TABLE SALESMAN (
+    SID VARCHAR2(5) PRIMARY KEY CHECK (SID LIKE 'S%'),
+    NAME VARCHAR2(50) NOT NULL,
+    CITY VARCHAR2(50) NOT NULL,
+    COMMISSION NUMBER(4,2) CHECK (COMMISSION > 0)
+);
+
+INSERT INTO SALESMAN VALUES ('S001', 'JAMES HOOG', 'NEW YORK', 0.15);
+INSERT INTO SALESMAN VALUES ('S002', 'NAIL KNITE', 'PARIS', 0.13);
+INSERT INTO SALESMAN VALUES ('S003', 'PIT ALEX', 'LONDON', 0.09);
+INSERT INTO SALESMAN VALUES ('S004', 'PAUL ADAM', 'PARIS', 0.14);
+2nd Table – CONSUMER
+CREATE TABLE CONSUMER (
+    CID VARCHAR2(5) PRIMARY KEY CHECK (CID LIKE 'C%'),
+    NAME VARCHAR2(50) NOT NULL,
+    CITY VARCHAR2(50) NOT NULL
+);
+
+INSERT INTO CONSUMER VALUES ('C001', 'NICK', 'NEW YORK');
+INSERT INTO CONSUMER VALUES ('C002', 'DAVIS', 'PARIS');
+INSERT INTO CONSUMER VALUES ('C003', 'JULIAN', 'BERLIN');
+INSERT INTO CONSUMER VALUES ('C004', 'FABIAN', 'NEW YORK');
+3rd Table – ORDER_DETAIL
+CREATE TABLE ORDER_DETAIL (
+    ORD_NO VARCHAR2(5) PRIMARY KEY CHECK (ORD_NO LIKE 'O%'),
+    OAMOUNT NUMBER(10,2) NOT NULL,
+    SID VARCHAR2(5),
+    CID VARCHAR2(5),
+    FOREIGN KEY (SID) REFERENCES SALESMAN(SID),
+    FOREIGN KEY (CID) REFERENCES CONSUMER(CID)
+);
+
+INSERT INTO ORDER_DETAIL VALUES ('O001', 1750.50, 'S001', 'C004');
+INSERT INTO ORDER_DETAIL VALUES ('O002', 950.75, 'S001', 'C001');
+INSERT INTO ORDER_DETAIL VALUES ('O003', 5760.50, 'S004', 'C002');
+INSERT INTO ORDER_DETAIL VALUES ('O004', 200.00, 'S001', 'C001');
+To Display All Tables’ Data
+-- Display SALESMAN
+SELECT * FROM SALESMAN;
+
+-- Display CONSUMER
+SELECT * FROM CONSUMER;
+
+-- Display ORDER_DETAIL
+SELECT * FROM ORDER_DETAIL;
+Now the Queries from the Question Paper
+Q1. Write the query to create the tables.
+✅ Already covered above in table creation scripts.
+
+Q2. Display the name of salesperson and consumer who reside in the same city.
+SELECT S.NAME AS SALESMAN, C.NAME AS CONSUMER
+FROM SALESMAN S
+JOIN CONSUMER C ON S.CITY = C.CITY;
+Q3. Display the total number of consumers belonging to each city.
+SELECT CITY, COUNT(*) AS TOTAL_CONSUMERS
+FROM CONSUMER
+GROUP BY CITY;
+Q4. Display the SID and name of the salesperson getting the lowest commission.
+SELECT SID, NAME
+FROM SALESMAN
+WHERE COMMISSION = (SELECT MIN(COMMISSION) FROM SALESMAN);
+Q5. Display the CID and name of the consumers who have received the order from the salesperson belonging to city PARIS or NEW YORK using subquery.
+SELECT DISTINCT C.CID, C.NAME
+FROM CONSUMER C
+WHERE C.CID IN (
+    SELECT O.CID
+    FROM ORDER_DETAIL O
+    WHERE O.SID IN (
+        SELECT SID FROM SALESMAN WHERE CITY IN ('PARIS', 'NEW YORK')
+    )
+);
+Q6. Provide 5% more commission to the salesperson whose name includes ‘A’ as the second letter.
+UPDATE SALESMAN
+SET COMMISSION = COMMISSION + (COMMISSION * 0.05)
+WHERE SUBSTR(NAME, 2, 1) = 'A';
+
+-- To verify the change
+SELECT * FROM SALESMAN;
